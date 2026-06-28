@@ -1,0 +1,7 @@
+Polymorphic Dictionary in C
+Copyright 2026 Molino Rosario Walter
+
+This product includes or implements the FNV-1a hashing algorithm,
+which is in the Public Domain.
+Original algorithm by Glenn Fowler, Landon Curt Noll, and Kiem-Phong Vo.
+For more details, see: http://www.isthe.com/chongo/tech/comp/fnv/

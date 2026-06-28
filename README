@@ -1,0 +1,7 @@
+## ⚠️ Disclaimer / Production Environment Notice
+
+This project was developed strictly for **educational and learning purposes** to explore data structures and polymorphism in C. 
+
+**DO NOT USE THIS CODE IN PRODUCTION ENVIRONMENTS.**
+
+This implementation has not been audited for security vulnerabilities, concurrency (thread safety), or production-scale workloads (such as Hash Collision DoS attacks). Use it in real-world applications entirely at your own risk.
