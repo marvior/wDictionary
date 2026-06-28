@@ -1,3 +1,16 @@
+# WDictionary is a Polymorphic Generic Dictionary in C
+
+A lightweight, polymorphic dictionary (hash map) implementation written in pure C (C11). This library supports nesting dictionaries inside other dictionaries and maps keys to different data types seamlessly using compile-time type dispatching.
+
+## Features
+
+* **Polymorphic Inserter:** Uses C11 `_Generic` macros to automatically choose the correct insertion function based on the input type (`char*` or `Dict*`).
+* **Nested Structures:** Supports dictionary-in-dictionary nesting, allowing you to build complex JSON-like hierarchical structures in C.
+* **Collision Resolution:** Implements a hash map with separate chaining (linked lists) using the public-domain **FNV-1a** 64-bit hashing algorithm.
+* **Safe Memory Management:** Features automated deep recursive cleanup via `free_dict()` to free all slots, keys, strings, and dynamically nested dictionaries without memory leaks.
+
+---
+
 ## ⚠️ Disclaimer / Production Environment Notice
 
 This project was developed strictly for **educational and learning purposes** to explore data structures and polymorphism in C. 
@@ -5,3 +18,20 @@ This project was developed strictly for **educational and learning purposes** to
 **DO NOT USE THIS CODE IN PRODUCTION ENVIRONMENTS.**
 
 This implementation has not been audited for security vulnerabilities, concurrency (thread safety), or production-scale workloads (such as Hash Collision DoS attacks). Use it in real-world applications entirely at your own risk.
+
+---
+
+## Project Structure
+
+* `wdictionary.h`: Library header containing types, structures, and the `insert` generic macro.
+* `wdictionary.c`: Core dictionary implementation (insertion, lookup, memory management).
+* `hash_fnv1a_64.h` / `.c`: The 64-bit FNV-1a hashing function implementation.
+* `main.c`: Example entry point showcasing creation, insertion of strings and nested dictionaries, and safe deletion.
+
+## Quick Start (Compilation)
+
+To compile the project with GCC/CC, pass all source files to the compiler:
+
+```bash
+cc main.c wdictionary.c hash_fnv1a_64.c -o dictionary_demo
+./dictionary_demo
