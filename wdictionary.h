@@ -27,9 +27,14 @@ typedef struct Dict Dict;
 
 typedef enum {
     TEXT,
-    DICTIONARY
+    DICTIONARY,
+    NUMBER
 }typeObject;
 
+typedef struct ListKeys{
+    char * key;
+    struct ListKeys * next;
+}ListKeys;
 
 typedef struct Node{
     char * key;
@@ -37,6 +42,7 @@ typedef struct Node{
     union {
         char * text;
         Dict * dict;
+        int * number;
     } value;
 
     struct Node * next;
@@ -50,19 +56,26 @@ struct Dict{
 };
 
 
+/*
+INTERNAL FUNCTION
+*/
+void _insert_string(Dict * dict,const char * key, const char * value);
+void _insert_number(Dict * dict,const char * key, int value);
+void _insert_dict(Dict * dict,const char * key, Dict * value);
 
 
-
+/*
+* USER FUNCTION
+*/
 void free_dict(Dict * dict);
 Dict * create_dictionary(int capacity);
 void * get_value(Dict * dict,const char * key);
-void _insert_string(Dict * dict,const char * key, const char * value);
-void _insert_dict(Dict * dict,const char * key, Dict * value);
-
+ListKeys * get_keys(Dict * dict);
 #define insert(dict, key, value) _Generic((value), \
     char*:        _insert_string,                  \
     const char*:  _insert_string,                  \
-    Dict*:        _insert_dict                     \
+    Dict*:        _insert_dict,                    \
+    int:          _insert_number                   \
 )(dict, key, value)
 
 #endif

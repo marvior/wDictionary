@@ -53,6 +53,28 @@ Node * _create_node_string(const char * key, const char * value){
 }
 
 /*
+    Create node with key and value int.
+    This function is colled by insert_value function
+*/
+Node * _create_node_number(const char * key, int value){
+
+    Node * mystruct = (Node *) malloc(sizeof(Node));
+    
+    mystruct->key = (char *) malloc(strlen(key)+1);
+    strcpy(mystruct->key,key);
+    mystruct->type = TEXT;
+    mystruct->value.number = (int *) malloc(sizeof(value));
+    *mystruct->value.number = value;
+
+    mystruct->next = NULL;
+
+    return mystruct;
+
+
+
+}
+
+/*
     Create node with key and value Dict.
     This function is colled by insert_value function
 */
@@ -121,6 +143,49 @@ void _insert_string(Dict * dict,const char * key, const char * value){
 }
 
 
+
+void _insert_number(Dict * dict,const char * key, int value){
+    int capacity = dict->capacity;
+    Node * next_node = NULL;
+
+    uint64_t myhash2=  hashing_fnv1a(key,capacity);
+    
+    //new slot without collision
+    if (dict->slots[myhash2] == NULL)
+        dict->slots[myhash2]=_create_node_number(key,value);
+    else{
+        //append node in slot with collisition
+        
+        //get first slot
+        next_node = dict->slots[myhash2];
+
+        //search the last element in the list
+        while(1){
+            if(strcmp(next_node->key,key)==0){
+
+                if(next_node->type==TEXT)
+                    free(next_node->value.text);
+                if(next_node->type==DICTIONARY)
+                    free(next_node->value.dict);
+                
+                next_node->value.number = &value;
+                
+                next_node->type = NUMBER;
+                return;
+            }
+            if(next_node->next==NULL){
+                next_node->next=_create_node_number(key,value);
+                return;
+            }
+            next_node = next_node->next;
+        }
+
+        
+            
+    }
+
+}
+
 /*
     insert node with value Dictionary into dictionary and check collision.
     If exists collision for a specific slot, append in the list the node created
@@ -184,8 +249,10 @@ void * get_value(Dict * dict,const char * key){
         if(strcmp(key,slot->key)==0){
             if (slot->type==TEXT)
                 return slot->value.text;
-            else
+            if (slot->type==DICTIONARY)
                 return slot->value.dict;
+            if (slot->type==NUMBER)
+                return slot->value.number;
         }
         slot=slot->next;
 
@@ -213,6 +280,41 @@ Dict * create_dictionary(int capacity){
 }
 
 
+ListKeys * get_keys(Dict * dict){
+    char * list[dict->capacity];
+    int count=0;
+    ListKeys * listkeys = NULL;
+    ListKeys * startlistkeys = NULL;
+
+    Node * mynode;
+    for(int i=0; i<dict->capacity; i++){
+        if (dict->slots[i]!=NULL){
+            mynode=dict->slots[i];
+            while(mynode!=NULL){   
+                
+                if (listkeys == NULL){
+                    
+                    startlistkeys=listkeys = (ListKeys *) malloc(sizeof(ListKeys));
+                    listkeys->key=(char *) malloc(strlen(mynode->key));
+                    strcpy(listkeys->key,mynode->key);
+                    listkeys->next=NULL;
+                }else{
+                    
+                    listkeys->next = (ListKeys *) malloc(sizeof(ListKeys));
+                    listkeys->next->key = (char *) malloc(strlen(mynode->key));
+                    strcpy(listkeys->next->key,mynode->key);
+                    listkeys=listkeys->next;
+                    listkeys->next=NULL;
+                }
+                
+                mynode=mynode->next;
+            }
+        }
+    }
+    return startlistkeys;
+}
+
+
 void free_dict(Dict * dict);
 
 void free_node(Node * node){
@@ -220,8 +322,10 @@ void free_node(Node * node){
         free_node(node->next);
     if(node->type==TEXT)
         free(node->value.text);
-    else
+    if(node->type==DICTIONARY)
         free_dict(node->value.dict);
+    if(node->type==NUMBER)
+        free(node->value.number);
     free(node->key);
     free(node);
 
