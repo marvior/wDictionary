@@ -2,7 +2,7 @@
 
 A lightweight, polymorphic dictionary (hash map) implementation written in pure C (C11). This library supports nesting dictionaries inside other dictionaries and maps keys to different data types seamlessly using compile-time type dispatching.
 
-## Features
+** Features
 
 * **Polymorphic Inserter:** Uses C11 `_Generic` macros to automatically choose the correct insertion function based on the input type (`char*` or `Dict*`).
 * **Nested Structures:** Supports dictionary-in-dictionary nesting, allowing you to build complex JSON-like hierarchical structures in C.
@@ -32,6 +32,5 @@ This implementation has not been audited for security vulnerabilities, concurren
 
 To compile the project with GCC/CC, pass all source files to the compiler:
 
-```bash
 cc main.c wdictionary.c hash_fnv1a_64.c -o dictionary_demo
 ./dictionary_demo
