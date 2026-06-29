@@ -23,6 +23,12 @@
 
 #include <stdint.h>
 
+typedef enum {
+    DICT_OK = 0,
+    DICT_ERR_MEMORY = -1,
+    DICT_ERR_INVALID = -2
+} DictStatus;
+
 typedef struct Dict Dict;
 
 typedef enum {
@@ -59,9 +65,9 @@ struct Dict{
 /*
 INTERNAL FUNCTION
 */
-void _insert_string(Dict * dict,const char * key, const char * value);
-void _insert_number(Dict * dict,const char * key, int value);
-void _insert_dict(Dict * dict,const char * key, Dict * value);
+DictStatus _insert_string(Dict * dict,const char * key, const char * value);
+DictStatus _insert_number(Dict * dict,const char * key, int value);
+DictStatus _insert_dict(Dict * dict,const char * key, Dict * value);
 
 
 /*
