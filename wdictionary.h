@@ -34,7 +34,8 @@ typedef struct Dict Dict;
 typedef enum {
     TEXT,
     DICTIONARY,
-    NUMBER
+    NUMBER,
+    FLOAT
 }typeObject;
 
 typedef struct ListKeys{
@@ -49,6 +50,7 @@ typedef struct Node{
         char * text;
         Dict * dict;
         int * number;
+        double * number_double;
     } value;
 
     struct Node * next;
@@ -67,6 +69,7 @@ INTERNAL FUNCTION
 */
 DictStatus _insert_string(Dict * dict,const char * key, const char * value);
 DictStatus _insert_number(Dict * dict,const char * key, int value);
+DictStatus _insert_number_double(Dict * dict,const char * key, double value);
 DictStatus _insert_dict(Dict * dict,const char * key, Dict * value);
 
 
@@ -81,7 +84,8 @@ ListKeys * get_keys(Dict * dict);
     char*:        _insert_string,                  \
     const char*:  _insert_string,                  \
     Dict*:        _insert_dict,                    \
-    int:          _insert_number                   \
+    int:          _insert_number,                   \
+    double:        _insert_number_double               \
 )(dict, key, value)
 
 #endif

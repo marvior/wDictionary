@@ -98,6 +98,41 @@ Node * _create_node_number(const char * key, int value){
 
 }
 
+
+/*
+    Create node with key and value float.
+    This function is colled by insert_value function
+*/
+Node * _create_node_number_double(const char * key, double value){
+
+    Node * mystruct = (Node *) malloc(sizeof(Node));
+    if(mystruct == NULL ) return NULL; 
+    
+    mystruct->key = (char *) malloc(strlen(key)+1);
+    if(mystruct->key == NULL){
+        free(mystruct);
+        return NULL;
+    }
+
+    strcpy(mystruct->key,key);
+    mystruct->type = NUMBER;
+    
+    mystruct->value.number_double = (double *) malloc(sizeof(double));
+    if(mystruct->value.number_double == NULL){
+        free(mystruct->key);
+        free(mystruct);
+        return NULL;
+    }
+    *mystruct->value.number_double = value;
+
+    mystruct->next = NULL;
+
+    return mystruct;
+
+
+
+}
+
 /*
     Create node with key and value Dict.
     This function is colled by insert_value function
@@ -211,15 +246,66 @@ DictStatus _insert_number(Dict * dict,const char * key, int value){
                 if(next_node->type==DICTIONARY) free_dict(next_node->value.dict);
                 if(next_node->type == NUMBER) free(next_node->value.number); 
 
-                next_node->value.number = tmp;
                 
-                *next_node->value.number = value;
+                *tmp = value;
+                next_node->value.number = tmp;
                 
                 next_node->type = NUMBER;
                 return DICT_OK;
             }
             if(next_node->next==NULL){
                 next_node->next=_create_node_number(key,value);
+                if(next_node->next == NULL) return DICT_ERR_MEMORY;
+                return DICT_OK;
+            }
+            next_node = next_node->next;
+        }
+
+        
+            
+    }
+    return DICT_OK;
+}
+
+
+
+
+DictStatus _insert_number_double(Dict * dict,const char * key, double value){
+    int capacity = dict->capacity;
+    Node * next_node = NULL;
+
+    uint64_t myhash2=  hashing_fnv1a(key,capacity);
+    
+    //new slot without collision
+    if (dict->slots[myhash2] == NULL){
+        dict->slots[myhash2]=_create_node_number_double(key,value);
+        if(dict->slots[myhash2] == NULL) return DICT_ERR_MEMORY;
+    }
+    else{
+        //append node in slot with collisition
+        
+        //get first slot
+        next_node = dict->slots[myhash2];
+
+        //search the last element in the list
+        while(1){
+            if(strcmp(next_node->key,key)==0){
+                double * tmp = (double *) malloc(sizeof(double));
+                if(tmp == NULL) return DICT_ERR_MEMORY;
+                if(next_node->type==TEXT) free(next_node->value.text);
+                if(next_node->type==DICTIONARY) free_dict(next_node->value.dict);
+                if(next_node->type == NUMBER) free(next_node->value.number); 
+                if(next_node->type == FLOAT) free(next_node->value.number_double); 
+
+                
+                *tmp = value;
+                next_node->value.number_double = tmp;
+                
+                next_node->type = FLOAT;
+                return DICT_OK;
+            }
+            if(next_node->next==NULL){
+                next_node->next=_create_node_number_double(key,value);
                 if(next_node->next == NULL) return DICT_ERR_MEMORY;
                 return DICT_OK;
             }
@@ -403,14 +489,10 @@ ListKeys * get_keys(Dict * dict){
 void free_dict(Dict * dict);
 
 void free_node(Node * node){
-    if(node->next!=NULL)
-        free_node(node->next);
-    if(node->type==TEXT)
-        free(node->value.text);
-    if(node->type==DICTIONARY)
-        free_dict(node->value.dict);
-    if(node->type==NUMBER)
-        free(node->value.number);
+    if(node->next!=NULL) free_node(node->next);
+    if(node->type==TEXT) free(node->value.text);
+    if(node->type==DICTIONARY) free_dict(node->value.dict);
+    if(node->type==NUMBER) free(node->value.number);
     free(node->key);
     free(node);
 

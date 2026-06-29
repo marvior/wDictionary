@@ -18,15 +18,15 @@ int main(){
     insert(mydict2,"hi2","Babies");
 
     insert(mydict,key,value);
-    insert(mydict,"hi",10);
+    insert(mydict,"hi",10.4);
     insert(mydict,"re","Baby1");
     insert(mydict,"ree","Baby3");
     insert(mydict,"ree","Baby13");
     insert(mydict,"tte",mydict2);
     insert(mydict,"tee","Baby5");
     
-    int * myint = (int *)get_value(mydict,"hi");
-    printf("hello int %i",*myint);
+    double * myint = (double *)get_value(mydict,"hi");
+    printf("hello int %f",*myint);
 
     Dict * val = (Dict *)get_value(mydict,"tte");
     char * val1_2 = (char *)get_value(val,"hi2");
