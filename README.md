@@ -28,6 +28,38 @@ This implementation has not been audited for security vulnerabilities, concurren
 * `hash_fnv1a_64.h` / `.c`: The 64-bit FNV-1a hashing function implementation.
 * `main.c`: Example entry point showcasing creation, insertion of strings and nested dictionaries, and safe deletion.
 
+## List function 
+
+### `Dict * create_dictionary(int capacity);`
+* **Purpose:** Allocates and initializes a new empty dictionary.
+* **Input:** An integer specifying the hash table size (e.g., `10`).
+* **Returns:** A pointer to the ready-to-use dictionary (`Dict *`).
+
+### `insert(dict, key, value)`
+* **Prototype/Macro:** `#define insert(dict, key, value) 
+* **Purpose:** Inserts a key-value pair into the dictionary. If the key already exists, it automatically updates the value.
+* **Smart Feature:** It automatically detects the data type at compile-time. It seamlessly supports **strings** (`char*` / `const char*`), **integers** (`int`), and **other dictionaries** (`Dict *`) to create nested configurations.
+* **For example:**
+  ```c
+  Dict * mydict = create_dictionary(CAPACITY);
+  Dict * mydict2 = create_dictionary(CAPACITY);
+  insert(mydict2,"ciao","mondo");
+  insert(mydict, "hello", mydict2);
+  insert(mydict, "hi", 10);
+  insert(mydict, "re", "Baby1");
+
+### `void * get_value(Dict * dict, const char * key);`
+* **Purpose:** Retrieves the value previously saved with that key.
+* **Returns:** A generic pointer (`void *`). You just need to cast it when reading (e.g., `(char *)` for text or `(int *)` for numbers). Returns `NULL` if the key does not exist.
+
+### `ListKeys * get_keys(Dict * dict);`
+* **Purpose:** Extracts the complete list of all the keys currently stored inside the dictionary.
+* **Returns:** A linked list of strings (`ListKeys *`) that you can easily iterate through using a `while` loop with `list->next`.
+
+### `void free_dict(Dict * dict);`
+* **Purpose:** **The most critical function.** It performs a deep, recursive memory cleanup. It automatically frees the dictionary, all keys, texts, numbers, and dynamically destroys any nested sub-dictionary, leaving zero memory leaks.
+
+
 ## Quick Start (Compilation)
 
 To compile the project with GCC/CC, pass all source files to the compiler:
